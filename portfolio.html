@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>林夏的插画</title>
+<title>林夏｜插画作品集</title>
 <style>
   :root {
     --paper: #eef1e8;
@@ -99,13 +99,13 @@
   <h1 class="name serif">林夏<span class="seal serif" aria-hidden="true">夏</span></h1>
   <div class="intro">
     <p class="lead serif">画山，画猫，画城市里没人注意的小角落。</p>
-    <p class="meta">自由插画师，住在杭州。接头像、书籍插画和小绘本，水彩和数字绘画都可以。</p>
+    <p class="meta">自由插画师｜坐标杭州。承接头像、书籍插画与小绘本定制，水彩、板绘均可。</p>
   </div>
 </header>
 
 <main>
   <section class="wrap">
-    <h2 class="serif">最近的画</h2>
+    <h2 class="serif">近期作品</h2>
     <div class="works">
       <div class="work wide">
         <figure>
@@ -185,18 +185,18 @@
   </section>
 
   <section class="wrap">
-    <h2 class="serif">接稿</h2>
+    <h2 class="serif">约稿价目</h2>
     <ul class="price">
-      <li><b>头像</b><em>¥120 起</em><small>半身，一个角色，含两次修改。</small></li>
-      <li><b>书籍或文章插画</b><em>¥400 起</em><small>按尺寸和复杂度报价，可开发票。</small></li>
-      <li><b>小绘本</b><em>面议</em><small>先聊故事，再定页数和风格。</small></li>
+      <li><b>头像</b><em>¥120 起</em><small>半身单人，含 2 次修改。</small></li>
+      <li><b>书籍或文章插画</b><em>¥400 起</em><small>按尺寸与复杂度报价，可开发票。</small></li>
+      <li><b>小绘本</b><em>面议</em><small>先沟通故事内容，再确定页数与画风。</small></li>
     </ul>
   </section>
 
   <section class="contact">
     <div class="wrap">
-      <h2 class="serif">约稿</h2>
-      <p>写清楚想画什么、用在哪里、什么时候要。一般两天内回复。</p>
+      <h2 class="serif">联系约稿</h2>
+      <p>约稿请注明画面内容、用途与交稿时间，一般 48 小时内回复。</p>
       <div class="mail">
         <code id="mail">linxia.draw@example.com</code>
         <button id="copy">复制邮箱</button>
@@ -204,12 +204,12 @@
     </div>
   </section>
 </main>
-<footer>示例页面，由猫爪工具铺制作</footer>
+<footer>本页面为演示模板 · 由「猫爪工具铺」生成</footer>
 
 <script>
   document.getElementById('copy').addEventListener('click', function () {
     var btn = this, text = document.getElementById('mail').textContent;
-    var done = function () { btn.textContent = '已复制'; setTimeout(function () { btn.textContent = '复制邮箱'; }, 1600); };
+    var done = function () { btn.textContent = '复制成功'; setTimeout(function () { btn.textContent = '复制邮箱'; }, 1600); };
     if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done, done); }
     else {
       var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>制作你的生日惊喜页</title>
+<style>
+  :root {
+    --bg: #fff8ef; --card: #ffffff; --line: #f0e3cf;
+    --ink: #3b2416; --soft: #7a6352; --accent: #e8788a; --accent-ink: #ffffff;
+    --ok: #2f8a63; --err: #c8402f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; line-height: 1.7; }
+  main { max-width: 480px; margin: 0 auto; padding: 0 0 48px; }
+
+  .top {
+    padding: 40px 22px 34px; color: #fff6e5; border-radius: 0 0 26px 26px;
+    background: radial-gradient(120% 90% at 50% 0%, #2b2660 0%, #1d1a3d 60%, #131030 100%);
+  }
+  .top h1 { font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", "Noto Serif CJK SC", serif; font-weight: 400; font-size: 32px; line-height: 1.35; }
+  .top p { margin-top: 8px; color: #c9c4ec; font-size: 15px; }
+
+  .step { margin: 22px 16px 0; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px 18px; }
+  .step h2 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .step h2 b { width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 14px; display: grid; place-items: center; flex: none; }
+  .step.locked { opacity: .45; pointer-events: none; }
+
+  label { display: block; font-size: 15px; font-weight: 600; margin: 16px 0 6px; }
+  label:first-of-type { margin-top: 0; }
+  label small { font-weight: 400; color: var(--soft); font-size: 13px; margin-left: 6px; }
+  input, textarea, select {
+    width: 100%; font: inherit; font-size: 16px; color: var(--ink);
+    padding: 11px 12px; border: 1px solid #e6d6c0; border-radius: 12px; background: #fffdf9;
+  }
+  textarea { min-height: 150px; resize: vertical; line-height: 1.8; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .count { text-align: right; font-size: 12px; color: var(--soft); margin-top: 4px; }
+
+  .row { display: flex; gap: 10px; }
+  .row input { flex: 1; }
+  .mem { display: grid; grid-template-columns: 38% 1fr; gap: 8px; margin-bottom: 8px; }
+
+  .btn {
+    display: block; width: 100%; margin-top: 18px; padding: 13px; border: 0; border-radius: 999px;
+    background: var(--ink); color: #fff; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer;
+  }
+  .btn.small { width: auto; margin: 0; padding: 0 20px; font-size: 15px; flex: none; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .msg { margin-top: 10px; font-size: 14px; min-height: 22px; }
+  .msg.ok { color: var(--ok); } .msg.err { color: var(--err); }
+
+  .themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .theme { position: relative; margin: 0; }
+  .theme input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .theme span {
+    display: block; height: 70px; border-radius: 14px; border: 3px solid transparent; cursor: pointer;
+    color: #fff; font-size: 14px; padding: 40px 0 0 10px; line-height: 1.2;
+  }
+  .theme input:checked + span { border-color: var(--accent); }
+  .theme input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .sw-night  { background: linear-gradient(160deg, #2b2660, #131030); }
+  .sw-sakura { background: linear-gradient(160deg, #6a2f55, #2a1428); }
+  .sw-mint   { background: linear-gradient(160deg, #1f5a5e, #0c2629); }
+
+  .result { display: none; margin-top: 18px; padding: 16px; border-radius: 14px; background: #f4fbf7; border: 1px solid #cfe9dc; }
+  .result.show { display: block; }
+  .result p { font-size: 15px; font-weight: 700; color: var(--ok); }
+  .result textarea { min-height: 84px; margin-top: 8px; font-size: 13px; color: var(--soft); }
+  .result .row { margin-top: 10px; }
+  .result .row .btn { flex: 1; margin: 0; }
+
+  .note { margin: 22px 22px 0; font-size: 13px; color: var(--soft); }
+  .note p + p { margin-top: 6px; }
+  footer { margin-top: 26px; text-align: center; font-size: 12px; color: #b5a28f; }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <h1>制作你的生日惊喜页</h1>
+    <p>填好内容，生成一个专属链接，发给 TA 就能打开。</p>
+  </header>
+
+  <section class="step" id="step1">
+    <h2><b>1</b>输入兑换码</h2>
+    <div class="row">
+      <input id="code" placeholder="例如 AB12-CD34" autocomplete="off" autocapitalize="characters" maxlength="12">
+      <button class="btn small" id="verify">验证</button>
+    </div>
+    <p class="msg" id="codeMsg"></p>
+  </section>
+
+  <section class="step locked" id="step2">
+    <h2><b>2</b>填写内容</h2>
+
+    <label for="n">寿星昵称<small>必填，最多 10 字</small></label>
+    <input id="n" maxlength="10" placeholder="例如 阿满">
+
+    <label for="l">想对 TA 说的话<small>必填，最多 300 字，回车可分段</small></label>
+    <textarea id="l" maxlength="300" placeholder="写下你最想说的话吧～"></textarea>
+    <p class="count"><span id="lc">0</span> / 300</p>
+
+    <label for="f">你的署名<small>必填，最多 10 字</small></label>
+    <input id="f" maxlength="10" placeholder="例如 小禾">
+
+    <label for="d">落款日期<small>选填</small></label>
+    <input id="d" maxlength="12" placeholder="例如 十一月十五日">
+
+    <label>我们的小时光<small>选填，最多 4 条</small></label>
+    <div id="mems"></div>
+
+    <label>页面配色</label>
+    <div class="themes" role="radiogroup" aria-label="页面配色">
+      <label class="theme"><input type="radio" name="t" value="night" checked><span class="sw-night">星夜蓝</span></label>
+      <label class="theme"><input type="radio" name="t" value="sakura"><span class="sw-sakura">樱花粉</span></label>
+      <label class="theme"><input type="radio" name="t" value="mint"><span class="sw-mint">薄荷绿</span></label>
+    </div>
+  </section>
+
+  <section class="step locked" id="step3">
+    <h2><b>3</b>生成专属链接</h2>
+    <button class="btn" id="make">生成专属链接</button>
+    <p class="msg" id="makeMsg"></p>
+    <div class="result" id="result">
+      <p>专属链接已生成</p>
+      <textarea id="link" readonly></textarea>
+      <div class="row">
+        <button class="btn" id="copy">复制链接</button>
+        <button class="btn ghost" id="preview">先预览一下</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">
+    <p>你写的内容只保存在链接里，我们不会存储任何文字。</p>
+    <p>修改内容后，需要重新生成并发送新链接。</p>
+    <p>为保护收礼人，内容中不能包含网址、联系方式或转账等字样。</p>
+  </div>
+
+  <footer>「猫爪工具铺」出品</footer>
+</main>
+
+<script>
+(function () {
+  var HASHES = ["1mb9xtv7rfn","hzki532z4t","1tyqheblwg1","161o6bl8l8l","1jh8dinlco9","glgma25mfp","21lwd6fo2es","32kzw08w5n","1ptb28zknae","go42ogl5qx","1g2b1pemzr6","1tyzb50hoao","1sijqtfdit4","2wdfzb2076","vnjrfm8u8o","1szb5ppor0n","26b8t5bimcm","1jqcp8kzt59","omx2bo5tos","1yhcl1r19q1","x32hqdlwyw","15mxy5c7umz","1tb06nlh4uz","1nstdgnnige","1ds7jr14qib","1wgkz3qeou8","2f9s3tsyr0b","1ff8k1tm5z4","o6d0qrjev6","29jc6crpkwa","1v57dvw4gaq","rb4h8vb4b5","1y5tm9012yf","n3m3hmoq27","13g1lpy2s24","riov7kimdw","17we28ywal6","2c03vz11x9q","2eoxz4gbrvu","5me8x6nwuh","1vkkmazrs3t","2btuc3yav15","2cfuzzu8ul6","1jwn3lxr6ab","vwhb61rp97","11pxen6inkd","1avqwzc1d3z","1ozuo8z80ff","12i3sm541kf","1sakds5orj7"];
+  var SALT = 'catpaw-bday-v1:';
+  var KEY = 'catpaw-bday-unlocked';
+
+  function cyrb53(str, seed) {
+    seed = seed || 0;
+    var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (var i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+  function $(id) { return document.getElementById(id); }
+
+  // memory rows
+  var memBox = $('mems');
+  for (var i = 0; i < 4; i++) {
+    var row = document.createElement('div'); row.className = 'mem';
+    row.innerHTML = '<input maxlength="12" placeholder="时间" aria-label="第' + (i + 1) + '条时间">' +
+                    '<input maxlength="40" placeholder="一句话回忆" aria-label="第' + (i + 1) + '条回忆">';
+    memBox.appendChild(row);
+  }
+
+  function unlock() {
+    $('step1').querySelector('input').disabled = true;
+    $('verify').disabled = true;
+    $('codeMsg').className = 'msg ok';
+    $('codeMsg').textContent = '验证成功，开始制作吧～';
+    $('step2').classList.remove('locked');
+    $('step3').classList.remove('locked');
+  }
+  try { if (localStorage.getItem(KEY) === '1') unlock(); } catch (e) {}
+
+  $('verify').addEventListener('click', function () {
+    var c = $('code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (HASHES.indexOf(cyrb53(SALT + c, 7)) >= 0) {
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      unlock();
+      $('n').focus();
+    } else {
+      $('codeMsg').className = 'msg err';
+      $('codeMsg').textContent = '兑换码不正确，请核对后重新输入';
+    }
+  });
+
+  $('l').addEventListener('input', function () { $('lc').textContent = this.value.length; });
+
+  var BAD = [
+    /https?:/i, /www\./i, /\.(com|cn|net|top|xyz|cc|vip|org|io|me)\b/i, /点\s*(com|cn|net)/i,
+    /\d{6,}/, /[０-９]{6,}/, /(微信|vx|v信|威信|wx|QQ|扣扣|电话|手机号)/i,
+    /(转账|汇款|银行卡|收款|付款码|红包|返利|中奖|兼职|刷单|贷款)/
+  ];
+  function unsafe(text) { return BAD.some(function (r) { return r.test(text); }); }
+
+  function encode(obj) {
+    var bytes = new TextEncoder().encode(JSON.stringify(obj)), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  var lastLink = '';
+  $('make').addEventListener('click', function () {
+    var msg = $('makeMsg');
+    var data = {
+      v: 1,
+      t: (document.querySelector('input[name="t"]:checked') || {}).value || 'night',
+      n: $('n').value.trim(), l: $('l').value.trim(), f: $('f').value.trim(), d: $('d').value.trim(), m: []
+    };
+    memBox.querySelectorAll('.mem').forEach(function (r) {
+      var ins = r.querySelectorAll('input'), a = ins[0].value.trim(), b = ins[1].value.trim();
+      if (b) data.m.push([a, b]);
+    });
+    if (!data.n || !data.l || !data.f) {
+      msg.className = 'msg err'; msg.textContent = '昵称、想说的话和署名都要填哦'; return;
+    }
+    var all = [data.n, data.l, data.f, data.d].concat(data.m.map(function (x) { return x.join(' '); })).join(' ');
+    if (unsafe(all)) {
+      msg.className = 'msg err'; msg.textContent = '内容中含有网址、联系方式或转账类文字，请删除后再生成'; return;
+    }
+    if (!data.d) delete data.d;
+    if (!data.m.length) delete data.m;
+    lastLink = new URL('card.html', location.href).href.split('#')[0] + '#d=' + encode(data);
+    $('link').value = lastLink;
+    msg.textContent = '';
+    $('result').classList.add('show');
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  $('copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () { btn.textContent = '复制成功'; setTimeout(function () { btn.textContent = '复制链接'; }, 1600); };
+    if (navigator.clipboard) { navigator.clipboard.writeText(lastLink).then(done, function () { fallback(); done(); }); }
+    else { fallback(); done(); }
+    function fallback() { var t = $('link'); t.select(); try { document.execCommand('copy'); } catch (e) {} }
+  });
+  $('preview').addEventListener('click', function () { if (lastLink) window.open(lastLink, '_blank'); });
+})();
+</script>
+</body>
+</html>

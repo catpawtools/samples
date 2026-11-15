@@ -152,7 +152,7 @@
 <main>
   <section class="hero">
     <h1>阿满，生日快乐</h1>
-    <p class="hint" id="hint">许个愿，然后点蜡烛把它们吹灭</p>
+    <p class="hint" id="hint">先许个愿，再轻点蜡烛把它们吹灭吧</p>
 
     <div class="cake">
       <div class="candles">
@@ -164,28 +164,28 @@
       <div class="tier-bottom"></div>
       <div class="plate"></div>
     </div>
-    <button class="again" id="again">再点一次蜡烛</button>
+    <button class="again" id="again">重新点亮蜡烛</button>
   </section>
 
   <article class="letter" id="letter" aria-live="polite">
     <p>阿满：</p>
-    <p>又长大一岁啦。今年你搬了新家，学会了做糖醋排骨，还终于敢一个人去看海。</p>
-    <p>你总说自己没什么特别的，可在我这里，你是那个记得我不吃香菜、下雨会多带一把伞的人。</p>
-    <p>新的一岁，愿你想去的地方都能去，想见的人都能见。累了就回来，我一直在。</p>
+    <p>又长大一岁啦！这一年你搬了新家，学会了做糖醋排骨，还终于一个人去看了海。</p>
+    <p>你总说自己很普通，可在我心里，你是那个记得我不吃香菜、下雨天会多带一把伞的人。</p>
+    <p>新的一岁，愿你想去的地方都能抵达，想见的人都能相见。累了就回来，我一直都在。</p>
     <p class="sign">小禾<br>十一月十五日</p>
   </article>
 
   <section class="memories" id="memories">
-    <h2>我们的一些小事</h2>
+    <h2>我们的小时光</h2>
     <ol>
-      <li><time>2019 年 9 月</time><p>开学第一天，你借了我一支笔，到现在都没还。</p></li>
-      <li><time>2021 年 7 月</time><p>暴雨里一起等了两个小时的公交，聊到天亮。</p></li>
-      <li><time>2024 年 2 月</time><p>你第一次一个人去看海，给我寄了一张明信片。</p></li>
-      <li><time>今天</time><p>你又长大了一岁，我还在你身边。</p></li>
+      <li><time>2019 年 9 月</time><p>开学第一天，你借了我一支笔，到现在还没还。</p></li>
+      <li><time>2021 年 7 月</time><p>暴雨天一起等了两个小时公交，那晚聊到天亮。</p></li>
+      <li><time>2024 年 2 月</time><p>你第一次独自去看海，还给我寄了张明信片。</p></li>
+      <li><time>今天</time><p>你又长大一岁，我依然在你身边。</p></li>
     </ol>
   </section>
 
-  <footer>示例页面，由猫爪工具铺制作</footer>
+  <footer>本页面为演示模板 · 由「猫爪工具铺」生成</footer>
 </main>
 
 <script>
@@ -213,9 +213,9 @@
       c.classList.add('out');
       var left = candles.filter(function (x) { return !x.classList.contains('out'); }).length;
       if (left > 0) {
-        hint.textContent = '还剩 ' + left + ' 根';
+        hint.textContent = '还剩 ' + left + ' 根，继续～';
       } else {
-        hint.textContent = '愿望收到啦，往下看';
+        hint.textContent = '愿望已收到，往下滑有惊喜';
         letter.classList.add('open');
         memories.classList.add('open');
         again.classList.add('show');
@@ -226,7 +226,7 @@
 
   again.addEventListener('click', function () {
     candles.forEach(function (c) { c.classList.remove('out'); });
-    hint.textContent = '许个愿，然后点蜡烛把它们吹灭';
+    hint.textContent = '先许个愿，再轻点蜡烛把它们吹灭吧';
     again.classList.remove('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
