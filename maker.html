@@ -72,6 +72,12 @@
   .result .row { margin-top: 10px; }
   .result .row .btn { flex: 1; margin: 0; }
 
+  .imgbox { display: none; margin-top: 18px; text-align: center; }
+  .imgbox.show { display: block; }
+  .imgbox p { font-size: 14px; color: var(--soft); margin-bottom: 10px; }
+  .imgbox img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px -12px rgba(0,0,0,.4); }
+  .imgbox .btn { text-decoration: none; text-align: center; }
+
   .note { margin: 22px 22px 0; font-size: 13px; color: var(--soft); }
   .note p + p { margin-top: 6px; }
   footer { margin-top: 26px; text-align: center; font-size: 12px; color: #b5a28f; }
@@ -131,6 +137,12 @@
         <button class="btn" id="copy">复制链接</button>
         <button class="btn ghost" id="preview">先预览一下</button>
       </div>
+      <button class="btn ghost" id="toImg">保存为长图（微信里也能发）</button>
+    </div>
+    <div class="imgbox" id="imgbox">
+      <p>长按图片保存到相册，再发给 TA 就好啦</p>
+      <img id="outImg" alt="生日惊喜长图">
+      <a class="btn" id="dl" download="生日惊喜.png">下载图片</a>
     </div>
   </section>
 
@@ -209,7 +221,143 @@
     return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  var lastLink = '';
+  var lastLink = '', lastData = null;
+
+  // ---------- long image ----------
+  var THEMES = {
+    night:  { bg: ['#2b2660', '#1d1a3d', '#131030'], icing: '#e8788a', mist: '#b9b4e0', dot: '#ffb547' },
+    sakura: { bg: ['#6a2f55', '#43203c', '#2a1428'], icing: '#f29ab4', mist: '#e9bcd0', dot: '#f6c26b' },
+    mint:   { bg: ['#1f5a5e', '#143c40', '#0c2629'], icing: '#8fd3c1', mist: '#b3dcd2', dot: '#ffd27a' }
+  };
+  var KAI = '"Kaiti SC","STKaiti","KaiTi","Songti SC","Noto Serif CJK SC",serif';
+  var SANS = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+
+  function wrap(ctx, text, maxW) {
+    var lines = [], cur = '', NOHEAD = '，。、！？；：,.!?;:）)】」』》〉”’…～—';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i], t = cur + ch;
+      if (ctx.measureText(t).width > maxW && cur && NOHEAD.indexOf(ch) < 0) { lines.push(cur); cur = ch; } else { cur = t; }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  function drawLong(d) {
+    var th = THEMES[d.t] || THEMES.night, W = 1080, PAD = 72;
+    var c = document.createElement('canvas'), ctx = c.getContext('2d');
+    c.width = W; c.height = 100;
+
+    // measure
+    ctx.font = '84px ' + KAI;
+    var titleLines = wrap(ctx, d.n + '，生日快乐', W - PAD * 2);
+    var paperX = PAD, paperW = W - PAD * 2, textW = paperW - 120;
+    ctx.font = '46px ' + KAI;
+    var paras = [[d.n + '：']];
+    d.l.split(/\n+/).forEach(function (p) { if (p.trim()) paras.push(wrap(ctx, p.trim(), textW)); });
+    var LH = 88, letterH = 90;
+    paras.forEach(function (p, i) { letterH += p.length * LH + (i ? 28 : 0); });
+    letterH += 40 + LH * (d.d ? 2 : 1) + 70;
+    ctx.font = '38px ' + SANS;
+    var mems = (d.m || []).map(function (m) { return { t: m[0], lines: wrap(ctx, m[1], W - PAD * 2 - 70) }; });
+    var memH = mems.length ? 110 + mems.reduce(function (s, m) { return s + 54 + m.lines.length * 62 + 40; }, 0) : 0;
+
+    var y0 = 150 + titleLines.length * 110;
+    var cakeTop = y0 + 70, cakeBottom = cakeTop + 560;
+    var H = cakeBottom + 80 + letterH + (memH ? 120 + memH : 0) + 200;
+    c.height = H;
+
+    // background
+    var g = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, H * 0.9);
+    g.addColorStop(0, th.bg[0]); g.addColorStop(0.45, th.bg[1]); g.addColorStop(1, th.bg[2]);
+    ctx.fillStyle = th.bg[2]; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    for (var s = 0; s < 140; s++) {
+      ctx.globalAlpha = 0.2 + Math.random() * 0.6; ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(Math.random() * W, Math.random() * H, 2.4, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // title
+    ctx.fillStyle = '#fff6e5'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.font = '84px ' + KAI;
+    titleLines.forEach(function (ln, i) { ctx.fillText(ln, W / 2, 190 + i * 110); });
+
+    // cake
+    var cx = W / 2, tierW = 520, tierX = cx - tierW / 2, topY = cakeTop + 250;
+    [-1, 0, 1].forEach(function (k) {
+      var x = cx + k * 130 - 18, y = topY - 140;
+      ctx.save(); rr(ctx, x, y, 36, 140, 6); ctx.clip();
+      ctx.fillStyle = '#fff6e5'; ctx.fillRect(x, y, 36, 140);
+      ctx.strokeStyle = th.icing; ctx.lineWidth = 12;
+      for (var j = -2; j < 12; j++) { ctx.beginPath(); ctx.moveTo(x - 10, y + j * 30); ctx.lineTo(x + 46, y + j * 30 + 40); ctx.stroke(); }
+      ctx.restore();
+      ctx.fillStyle = '#4a3b33'; ctx.fillRect(x + 16, y - 18, 4, 18);
+      var fg = ctx.createRadialGradient(x + 18, y - 40, 2, x + 18, y - 50, 60);
+      fg.addColorStop(0, 'rgba(255,181,71,.55)'); fg.addColorStop(1, 'rgba(255,181,71,0)');
+      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(x + 18, y - 50, 60, 0, 7); ctx.fill();
+      ctx.fillStyle = '#ffb547'; ctx.beginPath(); ctx.ellipse(x + 18, y - 52, 18, 32, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fff1c9'; ctx.beginPath(); ctx.ellipse(x + 18, y - 42, 8, 16, 0, 0, 7); ctx.fill();
+    });
+    rr(ctx, tierX, topY, tierW, 140, 22); ctx.fillStyle = '#fff6e5'; ctx.fill();
+    ctx.save(); rr(ctx, tierX, topY, tierW, 140, 22); ctx.clip();
+    ctx.fillStyle = th.icing; ctx.fillRect(tierX, topY, tierW, 34);
+    [[0.1, 24], [0.32, 18], [0.55, 26], [0.78, 20], [0.95, 15]].forEach(function (p) {
+      ctx.beginPath(); ctx.arc(tierX + tierW * p[0], topY + 34, p[1], 0, Math.PI); ctx.fill();
+    });
+    ctx.restore();
+    var bw = tierW + 110, bx = cx - bw / 2, by = topY + 140;
+    var bg2 = ctx.createLinearGradient(0, by, 0, by + 160); bg2.addColorStop(0, '#f3d9b8'); bg2.addColorStop(1, '#e9c79d');
+    rr(ctx, bx, by, bw, 160, 16); ctx.fillStyle = bg2; ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.beginPath(); ctx.ellipse(cx, by + 172, bw / 2 + 50, 16, 0, 0, 7); ctx.fill();
+
+    // letter
+    var py = cakeBottom + 80;
+    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 24;
+    rr(ctx, paperX, py, paperW, letterH, 10); ctx.fillStyle = '#fff6e5'; ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#3a2e2a'; ctx.textAlign = 'left'; ctx.font = '46px ' + KAI;
+    var ty = py + 90 + 30;
+    paras.forEach(function (p, i) {
+      if (i) ty += 28;
+      p.forEach(function (ln) { ctx.fillText(ln, paperX + 60, ty); ty += LH; });
+    });
+    ty += 40; ctx.textAlign = 'right';
+    ctx.fillText(d.f, paperX + paperW - 60, ty); ty += LH;
+    if (d.d) ctx.fillText(d.d, paperX + paperW - 60, ty);
+
+    // memories
+    if (mems.length) {
+      var my = py + letterH + 140;
+      ctx.textAlign = 'left'; ctx.fillStyle = th.mist; ctx.font = '600 42px ' + SANS;
+      ctx.fillText('我们的小时光', PAD, my); my += 80;
+      var lineTop = my - 20;
+      mems.forEach(function (m) {
+        ctx.fillStyle = th.dot; ctx.beginPath(); ctx.arc(PAD + 10, my - 12, 11, 0, 7); ctx.fill();
+        ctx.fillStyle = th.mist; ctx.font = '34px ' + SANS; ctx.fillText(m.t || '', PAD + 50, my); my += 58;
+        ctx.fillStyle = '#fff6e5'; ctx.font = '38px ' + SANS;
+        m.lines.forEach(function (ln) { ctx.fillText(ln, PAD + 50, my); my += 62; });
+        my += 40;
+      });
+      ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(PAD + 10, lineTop); ctx.lineTo(PAD + 10, my - 60); ctx.stroke();
+    }
+
+    ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.font = '30px ' + SANS;
+    ctx.fillText('由「猫爪工具铺」生日页制作', W / 2, H - 80);
+    return c.toDataURL('image/png');
+  }
+
+  $('toImg').addEventListener('click', function () {
+    if (!lastData) return;
+    var url = drawLong(lastData);
+    $('outImg').src = url; $('dl').href = url;
+    $('imgbox').classList.add('show');
+    $('imgbox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   $('make').addEventListener('click', function () {
     var msg = $('makeMsg');
     var data = {
@@ -230,6 +378,8 @@
     }
     if (!data.d) delete data.d;
     if (!data.m.length) delete data.m;
+    lastData = data;
+    $('imgbox').classList.remove('show');
     lastLink = new URL('card.html', location.href).href.split('#')[0] + '#d=' + encode(data);
     $('link').value = lastLink;
     msg.textContent = '';
