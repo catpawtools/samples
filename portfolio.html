@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>林夏的插画</title>
+<style>
+  :root {
+    --paper: #eef1e8;
+    --paper-2: #e2e7d9;
+    --ink: #23302b;
+    --ink-soft: #55635c;
+    --seal: #c4412f;
+    --moss: #7a8b6f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    line-height: 1.75;
+    font-size: 16px;
+  }
+  .serif { font-family: "Songti SC", "STSong", "Noto Serif CJK SC", "SimSun", serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+
+  /* Hero: vertical name */
+  .hero {
+    display: grid; grid-template-columns: auto 1fr; gap: 28px;
+    align-items: end; padding-top: 64px; padding-bottom: 56px;
+    border-bottom: 1px solid rgba(35,48,43,.18);
+  }
+  .name {
+    writing-mode: vertical-rl;
+    font-size: clamp(72px, 18vw, 148px); line-height: 1; font-weight: 700;
+    letter-spacing: .12em;
+    position: relative;
+  }
+  .seal {
+    position: absolute; right: -18px; bottom: -8px;
+    writing-mode: horizontal-tb;
+    width: 34px; height: 34px; display: grid; place-items: center;
+    background: var(--seal); color: var(--paper);
+    font-size: 15px; letter-spacing: 0; border-radius: 3px;
+    transform: rotate(-4deg);
+  }
+  .intro p { max-width: 26em; }
+  .intro .lead { font-size: 22px; line-height: 1.6; margin-bottom: 14px; }
+  .intro .meta { color: var(--ink-soft); font-size: 15px; }
+
+  section { padding-top: 56px; padding-bottom: 56px; }
+  h2 { font-size: 24px; font-weight: 700; margin-bottom: 26px; }
+
+  /* Works */
+  .works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 20px; }
+  .work figure { margin: 0; }
+  .work .art { aspect-ratio: 4 / 5; background: var(--paper-2); overflow: hidden; }
+  .work .art svg { width: 100%; height: 100%; display: block; }
+  .work figcaption { margin-top: 10px; font-size: 15px; }
+  .work figcaption span { display: block; color: var(--ink-soft); font-size: 13px; }
+  .work.wide { grid-column: span 2; }
+  .work.wide .art { aspect-ratio: 8 / 5; }
+
+  /* Commissions */
+  .price { border-top: 1px solid rgba(35,48,43,.18); }
+  .price li {
+    list-style: none; display: grid; grid-template-columns: 1fr auto; gap: 4px 16px;
+    padding: 18px 0; border-bottom: 1px solid rgba(35,48,43,.18);
+  }
+  .price b { font-size: 18px; font-weight: 600; }
+  .price em { font-style: normal; font-size: 18px; color: var(--seal); }
+  .price small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 14px; }
+
+  /* Contact */
+  .contact { background: var(--ink); color: var(--paper); }
+  .contact h2 { color: var(--paper); }
+  .contact p { max-width: 28em; color: #cfd6cb; }
+  .mail { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .mail code { font-family: inherit; font-size: 18px; color: var(--paper); }
+  .mail button {
+    padding: 8px 18px; border-radius: 999px; border: 1px solid rgba(238,241,232,.5);
+    background: transparent; color: var(--paper); font: inherit; font-size: 14px; cursor: pointer;
+  }
+  .mail button:hover { background: rgba(238,241,232,.1); }
+  .mail button:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+  footer { padding: 26px 0 34px; text-align: center; font-size: 12px; color: #8c978f; background: var(--ink); }
+
+  @media (max-width: 680px) {
+    .hero { gap: 20px; padding-top: 44px; padding-bottom: 40px; }
+    .intro .lead { font-size: 19px; }
+    .works { grid-template-columns: 1fr 1fr; gap: 20px 14px; }
+    .work.wide { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<header class="wrap hero">
+  <h1 class="name serif">林夏<span class="seal serif" aria-hidden="true">夏</span></h1>
+  <div class="intro">
+    <p class="lead serif">画山，画猫，画城市里没人注意的小角落。</p>
+    <p class="meta">自由插画师，住在杭州。接头像、书籍插画和小绘本，水彩和数字绘画都可以。</p>
+  </div>
+</header>
+
+<main>
+  <section class="wrap">
+    <h2 class="serif">最近的画</h2>
+    <div class="works">
+      <div class="work wide">
+        <figure>
+          <div class="art">
+            <svg viewBox="0 0 800 500" aria-hidden="true">
+              <rect width="800" height="500" fill="#e2e7d9"/>
+              <circle cx="610" cy="120" r="46" fill="#c4412f" opacity=".85"/>
+              <path d="M0 330 L120 210 L210 290 L330 150 L470 300 L560 230 L800 340 L800 500 L0 500Z" fill="#7a8b6f" opacity=".55"/>
+              <path d="M0 380 L160 290 L300 360 L420 270 L600 380 L800 320 L800 500 L0 500Z" fill="#23302b" opacity=".75"/>
+              <path d="M0 440 Q200 420 400 445 T800 440 L800 500 L0 500Z" fill="#eef1e8" opacity=".5"/>
+            </svg>
+          </div>
+          <figcaption>西湖边的傍晚<span>水彩，2026</span></figcaption>
+        </figure>
+      </div>
+      <div class="work">
+        <figure>
+          <div class="art">
+            <svg viewBox="0 0 400 500" aria-hidden="true">
+              <rect width="400" height="500" fill="#e2e7d9"/>
+              <rect x="70" y="70" width="260" height="300" fill="#eef1e8" stroke="#23302b" stroke-width="6"/>
+              <line x1="200" y1="70" x2="200" y2="370" stroke="#23302b" stroke-width="6"/>
+              <line x1="70" y1="220" x2="330" y2="220" stroke="#23302b" stroke-width="6"/>
+              <ellipse cx="200" cy="400" rx="95" ry="30" fill="#c4412f" opacity=".8"/>
+              <path d="M150 400 Q150 330 200 330 Q250 330 250 400Z" fill="#23302b"/>
+              <path d="M165 338 L172 312 L186 332Z M214 332 L228 312 L235 338Z" fill="#23302b"/>
+            </svg>
+          </div>
+          <figcaption>窗台上的猫<span>数字绘画，2026</span></figcaption>
+        </figure>
+      </div>
+      <div class="work">
+        <figure>
+          <div class="art">
+            <svg viewBox="0 0 400 500" aria-hidden="true">
+              <rect width="400" height="500" fill="#23302b"/>
+              <g fill="#eef1e8" opacity=".9">
+                <rect x="60" y="180" width="70" height="320"/><rect x="150" y="120" width="90" height="380"/><rect x="260" y="220" width="80" height="280"/>
+              </g>
+              <g fill="#c4412f">
+                <rect x="80" y="210" width="14" height="14"/><rect x="170" y="160" width="14" height="14"/><rect x="205" y="240" width="14" height="14"/><rect x="285" y="260" width="14" height="14"/><rect x="100" y="300" width="14" height="14"/>
+              </g>
+            </svg>
+          </div>
+          <figcaption>加班的楼<span>数字绘画，2025</span></figcaption>
+        </figure>
+      </div>
+      <div class="work">
+        <figure>
+          <div class="art">
+            <svg viewBox="0 0 400 500" aria-hidden="true">
+              <rect width="400" height="500" fill="#e2e7d9"/>
+              <path d="M200 90 C120 170 120 300 200 410 C280 300 280 170 200 90Z" fill="#7a8b6f"/>
+              <path d="M200 110 L200 410" stroke="#23302b" stroke-width="4"/>
+              <path d="M200 180 L150 150 M200 240 L140 205 M200 300 L150 270 M200 200 L250 170 M200 260 L260 225 M200 320 L250 290" stroke="#23302b" stroke-width="3"/>
+            </svg>
+          </div>
+          <figcaption>一片叶子<span>水彩，2025</span></figcaption>
+        </figure>
+      </div>
+      <div class="work">
+        <figure>
+          <div class="art">
+            <svg viewBox="0 0 400 500" aria-hidden="true">
+              <rect width="400" height="500" fill="#e2e7d9"/>
+              <g stroke="#7a8b6f" stroke-width="3" opacity=".6">
+                <line x1="60" y1="40" x2="40" y2="110"/><line x1="160" y1="20" x2="140" y2="90"/><line x1="300" y1="50" x2="280" y2="120"/><line x1="350" y1="160" x2="330" y2="230"/><line x1="90" y1="180" x2="70" y2="250"/>
+              </g>
+              <path d="M90 250 Q200 120 310 250 Z" fill="#c4412f"/>
+              <path d="M200 250 L200 400 Q200 425 178 425" stroke="#23302b" stroke-width="7" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <figcaption>下雨天<span>水彩，2025</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2 class="serif">接稿</h2>
+    <ul class="price">
+      <li><b>头像</b><em>¥120 起</em><small>半身，一个角色，含两次修改。</small></li>
+      <li><b>书籍或文章插画</b><em>¥400 起</em><small>按尺寸和复杂度报价，可开发票。</small></li>
+      <li><b>小绘本</b><em>面议</em><small>先聊故事，再定页数和风格。</small></li>
+    </ul>
+  </section>
+
+  <section class="contact">
+    <div class="wrap">
+      <h2 class="serif">约稿</h2>
+      <p>写清楚想画什么、用在哪里、什么时候要。一般两天内回复。</p>
+      <div class="mail">
+        <code id="mail">linxia.draw@example.com</code>
+        <button id="copy">复制邮箱</button>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>示例页面，由猫爪工具铺制作</footer>
+
+<script>
+  document.getElementById('copy').addEventListener('click', function () {
+    var btn = this, text = document.getElementById('mail').textContent;
+    var done = function () { btn.textContent = '已复制'; setTimeout(function () { btn.textContent = '复制邮箱'; }, 1600); };
+    if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done, done); }
+    else {
+      var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);
+      t.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t); done();
+    }
+  });
+</script>
+</body>
+</html>
