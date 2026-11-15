@@ -118,6 +118,10 @@
     <label>我们的小时光<small>选填，最多 4 条</small></label>
     <div id="mems"></div>
 
+    <label for="photo">放一张合照<small>选填，只出现在长图里</small></label>
+    <input id="photo" type="file" accept="image/*">
+    <p class="count" id="photoMsg">照片只在你的手机里处理，不会上传</p>
+
     <label>页面配色</label>
     <div class="themes" role="radiogroup" aria-label="页面配色">
       <label class="theme"><input type="radio" name="t" value="night" checked><span class="sw-night">星夜蓝</span></label>
@@ -267,7 +271,10 @@
 
     var y0 = 150 + titleLines.length * 110;
     var cakeTop = y0 + 70, cakeBottom = cakeTop + 560;
-    var H = cakeBottom + 80 + letterH + (memH ? 120 + memH : 0) + 200;
+    var PW = 700, PH = 0;
+    if (photo) PH = Math.round(Math.min(PW * photo.height / photo.width, 860));
+    var photoBlock = photo ? PH + 48 + 110 + 90 : 0;
+    var H = cakeBottom + photoBlock + 80 + letterH + (memH ? 120 + memH : 0) + 200;
     c.height = H;
 
     // background
@@ -314,8 +321,24 @@
     rr(ctx, bx, by, bw, 160, 16); ctx.fillStyle = bg2; ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.beginPath(); ctx.ellipse(cx, by + 172, bw / 2 + 50, 16, 0, 0, 7); ctx.fill();
 
+    // photo (polaroid)
+    if (photo) {
+      var fx = W / 2, fy = cakeBottom + 60 + (PH + 48 + 110) / 2;
+      ctx.save(); ctx.translate(fx, fy); ctx.rotate(-0.035);
+      var fw = PW + 48, fh = PH + 48 + 110;
+      ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+      ctx.fillStyle = '#fffdf8'; ctx.fillRect(-fw / 2, -fh / 2, fw, fh);
+      ctx.shadowColor = 'transparent';
+      var sr = PW / PH, ir = photo.width / photo.height, sx = 0, sy = 0, sw = photo.width, sh = photo.height;
+      if (ir > sr) { sw = photo.height * sr; sx = (photo.width - sw) / 2; } else { sh = photo.width / sr; sy = (photo.height - sh) / 2; }
+      ctx.drawImage(photo, sx, sy, sw, sh, -PW / 2, -fh / 2 + 24, PW, PH);
+      ctx.fillStyle = '#5a4a40'; ctx.textAlign = 'center'; ctx.font = '44px ' + KAI;
+      ctx.fillText(d.f + ' & ' + d.n, 0, fh / 2 - 40);
+      ctx.restore();
+    }
+
     // letter
-    var py = cakeBottom + 80;
+    var py = cakeBottom + photoBlock + 80;
     ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 24;
     rr(ctx, paperX, py, paperW, letterH, 10); ctx.fillStyle = '#fff6e5'; ctx.fill();
     ctx.shadowColor = 'transparent';
@@ -350,6 +373,17 @@
     ctx.fillText('由「猫爪工具铺」生日页制作', W / 2, H - 80);
     return c.toDataURL('image/png');
   }
+
+  var photo = null;
+  $('photo').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    photo = null;
+    if (!f) { $('photoMsg').textContent = '照片只在你的手机里处理，不会上传'; return; }
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () { photo = img; $('photoMsg').textContent = '照片已选好，生成长图时会放进去'; };
+    img.onerror = function () { $('photoMsg').textContent = '这张照片读取失败，换一张试试'; };
+    img.src = url;
+  });
 
   $('toImg').addEventListener('click', function () {
     if (!lastData) return;
